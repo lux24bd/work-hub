@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Hub - Ad Submission Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #0f0f10;
+            color: #fafafa;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 448px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1a1a1b;
+            border: 1px solid #2d2d30;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content.confirm {
+            max-width: 280px;
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .modal-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #22c55e;
+            margin-bottom: 8px;
+        }
+
+        .modal-title.confirm {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .modal-description {
+            color: #a3a3a3;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .modal-description.confirm {
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #2d2d30;
+            color: #a3a3a3;
+            margin-bottom: 8px;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .btn-green {
+            background: #22c55e;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        /* Header Stats */
+        .header-stats {
+            background: #1a1a1b;
+            border-radius: 24px;
+            margin: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item:first-child {
+            text-align: left;
+        }
+
+        .stat-item:last-child {
+            text-align: right;
+        }
+
+        .stat-label {
+            color: #a3a3a3;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .vip-badge {
+            background: #8b5cf6;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .progress-text {
+            color: #38bdf8;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .commission-text {
+            color: #22c55e;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #2d2d30;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #38bdf8;
+            transition: width 0.3s ease;
+        }
+
+        /* Ad Card */
+        .ad-card {
+            background: #1a1a1b;
+            border-radius: 24px;
+            margin: 0 16px 24px;
+            overflow: hidden;
+        }
+
+        .ad-image {
+            width: 100%;
+            height: 192px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .rating-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ad-content {
+            padding: 24px;
+        }
+
+        .ad-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            color: #a3a3a3;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            color: #a3a3a3;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: bold;
+        }
+
+        .order-number {
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .total-amount {
+            color: #22c55e;
+        }
+
+        .gross-commission {
+            color: #22c55e;
+            font-size: 20px;
+        }
+
+        /* Success Modal */
+        .success-modal .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .trophy {
+            font-size: 64px;
+            margin: 24px 0;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .completion-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .completion-message {
+            color: #a3a3a3;
+            margin-bottom: 32px;
+        }
+
+        .final-commission {
+            background: #22c55e;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Work Hub Modal -->
+        <div id="workHubModal" class="modal">
+            <div class="modal-content">
+                <h1 class="modal-title">Work Hub</h1>
+                <button class="btn btn-primary" onclick="startWork()">Start Working</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent" class="hidden">
+            <!-- Header Stats -->
+            <div class="header-stats">
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <p class="stat-label">VIP Level</p>
+                        <span class="vip-badge">Bronze</span>
+                    </div>
+                    <div class="stat-item">
+                        <p class="stat-label">Progress</p>
+                        <p class="progress-text"><span id="currentProgress">1</span> / 25</p>
+                    </div>
+                    <div class="stat-item">
+                        <p class="stat-label">Total Commission</p>
+                        <p class="commission-text">৳<span id="totalCommission">0</span></p>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 4%;"></div>
+                </div>
+            </div>
+
+            <!-- Ad Card -->
+            <div class="ad-card" id="adCard">
+                <div style="position: relative;">
+                    <img id="adImage" class="ad-image" src="" alt="">
+                    <div class="rating-badge">
+                        <span>⭐</span>
+                        <span id="adRating">4.8</span>
+                    </div>
+                </div>
+                <div class="ad-content">
+                    <h2 class="ad-title" id="adTitle">Luxury Ocean Resort</h2>
+                    <div class="rating-row">
+                        <div class="stars" id="adStars">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                        <span class="rating-text" id="adRatingText">4.8(234)</span>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <p class="info-label">Order Number:</p>
+                            <p class="info-value order-number" id="orderNumber">1321654987456123</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-label">Total Amount:</p>
+                            <p class="info-value total-amount" id="totalAmount">৳ 15,000,000</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-label">Gross Commission:</p>
+                            <p class="info-value gross-commission" id="grossCommission">92</p>
+                        </div>
+                        <div class="info-item">
+                            <p class="info-label">Scheduled Time:</p>
+                            <p class="info-value" id="scheduledTime">08/18/2025, 15:45</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showConfirmModal()">Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Modal -->
+        <div id="confirmModal" class="modal hidden">
+            <div class="modal-content confirm">
+                <h2 class="modal-title confirm">Confirm Submission</h2>
+                <p class="modal-description confirm">Are you sure you want to submit?</p>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <button class="btn btn-secondary" onclick="hideConfirmModal()">Cancel</button>
+                    <button class="btn btn-green" onclick="confirmSubmission()">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="modal hidden">
+            <div class="modal-content success-modal">
+                <h2 class="modal-title">Congratulations!</h2>
+                <p class="modal-description">You have successfully completed all Bronze Level  work for today</p>
+                <div class="trophy">🏆</div>
+                <h3 class="completion-title">Today's work completed</h3>
+                <p class="completion-message">Excellent! You have successfully completed today's work.</p>
+                <div class="final-commission">
+                    Total Commission<br>
+                    ৳2500
+                </div>
+                <button class="btn btn-success" onclick="goToHome()">Go to Home Page</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ad listings data with all 25 unique ads and images
+        const adListings = [
+            { id: "1", name: "Luxury Ocean Resort", image: "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.8, reviews: 234, totalAmount: 15000000, grossCommission: 92, orderNumber: "1321654987456123", category: "hotel" },
+            { id: "2", name: "Mountain View Hotel", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.5, reviews: 189, totalAmount: 8500000, grossCommission: 102, orderNumber: "1321654987456124", category: "hotel" },
+            { id: "3", name: "Urban Boutique Hotel", image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.3, reviews: 156, totalAmount: 6200000, grossCommission: 103, orderNumber: "1321654987456125", category: "hotel" },
+            { id: "4", name: "Seaside Paradise Villa", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.9, reviews: 312, totalAmount: 22000000, grossCommission: 117, orderNumber: "1321654987456126", category: "hotel" },
+            { id: "5", name: "Historic Grand Palace", image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.6, reviews: 198, totalAmount: 18500000, grossCommission: 97, orderNumber: "1321654987456127", category: "hotel" },
+            { id: "6", name: "Desert Oasis Resort", image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.4, reviews: 167, totalAmount: 12400000, grossCommission: 87, orderNumber: "1321654987456128", category: "hotel" },
+            { id: "7", name: "Alpine Lodge Retreat", image: "https://images.unsplash.com/photo-1551524164-6cf6ac6928a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.7, reviews: 223, totalAmount: 9800000, grossCommission: 112, orderNumber: "1321654987456129", category: "hotel" },
+            { id: "8", name: "Riverside Luxury Inn", image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.2, reviews: 145, totalAmount: 7300000, grossCommission: 77, orderNumber: "1321654987456130", category: "hotel" },
+            { id: "9", name: "Fine Dining Bistro", image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.6, reviews: 189, totalAmount: 3200000, grossCommission: 107, orderNumber: "1321654987456131", category: "restaurant" },
+            { id: "10", name: "Rooftop Garden Restaurant", image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.4, reviews: 167, totalAmount: 2850000, grossCommission: 92, orderNumber: "1321654987456132", category: "restaurant" },
+            { id: "11", name: "Coastal Seafood House", image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.5, reviews: 198, totalAmount: 4100000, grossCommission: 127, orderNumber: "1321654987456133", category: "restaurant" },
+            { id: "12", name: "Urban Coffee Lounge", image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.3, reviews: 134, totalAmount: 1950000, grossCommission: 72, orderNumber: "1321654987456134", category: "restaurant" },
+            { id: "13", name: "Artisan Pizza Kitchen", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.7, reviews: 212, totalAmount: 2780000, grossCommission: 102, orderNumber: "1321654987456135", category: "restaurant" },
+            { id: "14", name: "Wine & Dine Experience", image: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.8, reviews: 256, totalAmount: 5600000, grossCommission: 87, orderNumber: "1321654987456136", category: "restaurant" },
+            { id: "15", name: "Street Food Paradise", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.2, reviews: 145, totalAmount: 1650000, grossCommission: 127, orderNumber: "1321654987456137", category: "restaurant" },
+            { id: "16", name: "Garden Terrace Cafe", image: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.4, reviews: 178, totalAmount: 2350000, grossCommission: 82, orderNumber: "1321654987456138", category: "restaurant" },
+            { id: "17", name: "Tokyo Skyline Experience", image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.9, reviews: 342, totalAmount: 25000000, grossCommission: 112, orderNumber: "1321654987456139", category: "destination" },
+            { id: "18", name: "Paris City Break", image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.7, reviews: 298, totalAmount: 18900000, grossCommission: 97, orderNumber: "1321654987456140", category: "destination" },
+            { id: "19", name: "Northern Lights Adventure", image: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.8, reviews: 234, totalAmount: 32000000, grossCommission: 122, orderNumber: "1321654987456141", category: "destination" },
+            { id: "20", name: "Tropical Island Getaway", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.6, reviews: 189, totalAmount: 28500000, grossCommission: 98, orderNumber: "1321654987456142", category: "destination" },
+            { id: "21", name: "Safari Wildlife Tour", image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.5, reviews: 167, totalAmount: 45000000, grossCommission: 87, orderNumber: "1321654987456143", category: "destination" },
+            { id: "22", name: "Ancient Ruins Explorer", image: "https://images.unsplash.com/photo-1539650116574-75c0c6d73aeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.4, reviews: 156, totalAmount: 15800000, grossCommission: 107, orderNumber: "1321654987456144", category: "destination" },
+            { id: "23", name: "Mountain Hiking Expedition", image: "https://images.unsplash.com/photo-1464822759844-d150baef493e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.3, reviews: 134, totalAmount: 12300000, grossCommission: 95, orderNumber: "1321654987456145", category: "destination" },
+            { id: "24", name: "Cultural Heritage Tour", image: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.7, reviews: 223, totalAmount: 19600000, grossCommission: 97, orderNumber: "1321654987456146", category: "destination" },
+            { id: "25", name: "Wine Valley Experience", image: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", rating: 4.6, reviews: 198, totalAmount: 8900000, grossCommission: 102, orderNumber: "1321654987456147", category: "destination" }
+        ];
+
+        let currentAdIndex = 0;
+        let submittedAds = 0;
+        let totalCommission = 0;
+
+        function startWork() {
+            document.getElementById('workHubModal').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            loadCurrentAd();
+        }
+
+        function loadCurrentAd() {
+            const ad = adListings[currentAdIndex];
+            
+            document.getElementById('adImage').src = ad.image;
+            document.getElementById('adImage').alt = ad.name;
+            document.getElementById('adTitle').textContent = ad.name;
+            document.getElementById('adRating').textContent = ad.rating;
+            document.getElementById('adRatingText').textContent = `${ad.rating}(${ad.reviews})`;
+            document.getElementById('orderNumber').textContent = ad.orderNumber;
+            document.getElementById('totalAmount').textContent = `৳ ${ad.totalAmount.toLocaleString()}`;
+            document.getElementById('grossCommission').textContent = ad.grossCommission;
+            document.getElementById('scheduledTime').textContent = generateScheduledTime();
+            
+            updateStars(ad.rating);
+        }
+
+        function updateStars(rating) {
+            const starsContainer = document.getElementById('adStars');
+            const fullStars = Math.floor(rating);
+            let starsHTML = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<span class="star">★</span>';
+            }
+            
+            if (rating % 1 !== 0) {
+                starsHTML += '<span class="star">★</span>';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '<span class="star" style="color: #6b7280;">★</span>';
+            }
+            
+            starsContainer.innerHTML = starsHTML;
+        }
+
+        function generateScheduledTime() {
+            const now = new Date();
+            const randomHours = Math.floor(Math.random() * 12) + 1;
+            const randomMinutes = Math.floor(Math.random() * 60);
+            const scheduledTime = new Date(now.getTime() + randomHours * 60 * 60 * 1000 + randomMinutes * 60 * 1000);
+            
+            const day = String(scheduledTime.getDate()).padStart(2, '0');
+            const month = String(scheduledTime.getMonth() + 1).padStart(2, '0');
+            const year = scheduledTime.getFullYear();
+            const hours = String(scheduledTime.getHours()).padStart(2, '0');
+            const minutes = String(scheduledTime.getMinutes()).padStart(2, '0');
+            
+            return `${day}/${month}/${year}, ${hours}:${minutes}`;
+        }
+
+        function showConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function hideConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function confirmSubmission() {
+            hideConfirmModal();
+            
+            const ad = adListings[currentAdIndex];
+            submittedAds++;
+            totalCommission += ad.grossCommission;
+            
+            // Update UI
+            document.getElementById('currentProgress').textContent = submittedAds + 1;
+            document.getElementById('totalCommission').textContent = totalCommission;
+            
+            const progressPercent = (submittedAds / 25) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            
+            if (submittedAds >= 25) {
+                totalCommission = 2500; // Set final commission to exactly 2500
+                document.getElementById('successModal').classList.remove('hidden');
+            } else {
+                currentAdIndex++;
+                loadCurrentAd();
+            }
+        }
+
+        function goToHome() {
+            // Reset everything
+            currentAdIndex = 0;
+            submittedAds = 0;
+            totalCommission = 0;
+            
+            document.getElementById('successModal').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('workHubModal').classList.remove('hidden');
+            
+            // Reset UI
+            document.getElementById('currentProgress').textContent = '1';
+            document.getElementById('totalCommission').textContent = '0';
+            document.getElementById('progressFill').style.width = '4%';
+        }
+
+        // Initialize
+        window.addEventListener('load', function() {
+            // Work Hub modal is shown by default
+        });
+    </script>
+</body>
+</html>
